@@ -1,0 +1,3 @@
+What it: Calculator on Go (Made with help Replit AI)
+My first work on GO
+Calculator haven't interface
