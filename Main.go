@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 type Calculator interface {
@@ -34,42 +37,48 @@ func (d Division) Calculate(x, y float64) float64 {
 }
 
 func main() {
-	fmt.Println("Select operation:")
-	fmt.Println("1. Add")
-	fmt.Println("2. Subtract")
-	fmt.Println("3. Multiply")
-	fmt.Println("4. Divide")
-
 	var choice string
-	fmt.Print("Enter choice (1/2/3/4): ")
-	fmt.Scanln(&choice)
-
 	var num1, num2 float64
-	fmt.Print("Enter first number: ")
-	fmt.Scanln(&num1)
+	keepCalculating := true
 
-	fmt.Print("Enter second number: ")
-	fmt.Scanln(&num2)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
-	var calculator Calculator
-	switch choice {
-	case "1":
-		calculator = Addition{}
-	case "2":
-		calculator = Subtraction{}
-	case "3":
-		calculator = Multiplication{}
-	case "4":
-		calculator = Division{}
-	default:
-		fmt.Println("Invalid input")
-		return
-	}
+	for keepCalculating {
+		fmt.Println("Select operation:")
+		fmt.Println("1. Add")
+		fmt.Println("2. Subtract")
+		fmt.Println("3. Multiply")
+		fmt.Println("4. Divide")
 
-	result := calculator.Calculate(num1, num2)
-	fmt.Println("Result:", result)
+		fmt.Print("Enter choice (1/2/3/4): ")
+		fmt.Scanln(&choice)
 
-	fmt.Print("Do you want to continue? (y/n): ")
+		fmt.Print("Enter first number: ")
+		fmt.Scanln(&num1)
+
+		fmt.Print("Enter second number: ")
+		fmt.Scanln(&num2)
+
+		var calculator Calculator
+		switch choice {
+		case "1":
+			calculator = Addition{}
+		case "2":
+			calculator = Subtraction{}
+		case "3":
+			calculator = Multiplication{}
+		case "4":
+			calculator = Division{}
+		default:
+			fmt.Println("Invalid input")
+			continue
+		}
+
+		result := calculator.Calculate(num1, num2)
+		fmt.Println("Result:", result)
+
+		fmt.Print("Do you want to continue? (y/n): ")
 		var continueChoice string
 		fmt.Scanln(&continueChoice)
 
