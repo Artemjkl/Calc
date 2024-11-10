@@ -68,4 +68,21 @@ func main() {
 
 	result := calculator.Calculate(num1, num2)
 	fmt.Println("Result:", result)
+
+	fmt.Print("Do you want to continue? (y/n): ")
+		var continueChoice string
+		fmt.Scanln(&continueChoice)
+
+		if continueChoice != "y" {
+			keepCalculating = false
+		}
+
+		// Обработка сигнала прерывания
+		select {
+		case <-c:
+			fmt.Println("Exiting...")
+			return
+		default:
+		}
+	}
 }
